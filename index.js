@@ -4,13 +4,14 @@ const { tweetNews } = require('./src/scripts/twitter.js');
 const { Tecmundo } = require('./src/scripts/tecmundo.js');
 const { OlharDigital } = require('./src/scripts/olhardigital.js');
 const { CnnBrasil } = require('./src/scripts/cnn.js');
+const { G1 } = require('./src/scripts/g1.js');
 var website = null;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-switch(getRandomInt(3)) {
+switch(getRandomInt(4)) {
     case 1: 
         website = new Tecmundo()
         break;
@@ -19,6 +20,9 @@ switch(getRandomInt(3)) {
         break;
     case 3:
         website = new CnnBrasil()
+        break;
+    case 4:
+        website = new G1()
         break;
 }
 
