@@ -1,6 +1,4 @@
 const { TwitterApi, EUploadMimeType } = require('twitter-api-v2');
-const axios = require('axios');
-const fs = require('fs');
 
 require('dotenv').config()
 const TWITTER_API_KEY = process.env.TWITTER_API_KEY;

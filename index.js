@@ -40,43 +40,44 @@ function downloadImage(imageUrl) {
 
 const doWork = async () => {
     switch(getRandomInt(3)) {
-        case 1: 
+        case 0: 
          console.log(Date() + '- Tecmundo');
             website = new Tecmundo()
             break;
-        case 2:
+        case 1:
             console.log(Date() + '- Veja'); //ok
             website = new Veja()
             break;
-        case 3:
+        case 2:
             console.log(Date() + '- CnnBrasil'); //ok
             website = new CnnBrasil()
             break;
-        // case 4: 
+        // case 3: 
         //     console.log(Date() + '- G1');
         //     website = new G1()
         //     break;
-        // case 5:
+        // case 4:
         //     console.log(Date() + '- OlharDigital');
         //     website = new OlharDigital()
         //     break;
     }
 
-    website = new Tecmundo()
-
-    website.getLatestNews().then(response => {
-        var latestNewsInfo = response;
-        downloadImage(response.imageUrl).then(response => {
-            tweetNews(latestNewsInfo);
-            postNews(latestNewsInfo);
+    if (website) {
+        website.getLatestNews().then(response => {
+            var latestNewsInfo = response;
+            downloadImage(response.imageUrl).then(response => {
+                tweetNews(latestNewsInfo);
+                postNews(latestNewsInfo);
+            });
         });
-    });
+    }
 } 
 
 doWork();
 
 // const jog = new CronJob('* 5 * * * *', () => {
 //     console.log('running a task every 5 minutes');
+//     doWork();
 // });
 
 // job.start();
