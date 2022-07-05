@@ -12,8 +12,8 @@ class G1 {
                 axios(this.url).then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
-                    const latestNews = $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-post-body-title.gui-color-primary.gui-color-hover > div > a').first();
-                    const latestNewsTitle = $(latestNews).text() + '\n\n' + $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-post-body-resumo').text();
+                    const latestNews = $('.feed-post-body-title.gui-color-primary.gui-color-hover').first();
+                    const latestNewsTitle = $(latestNews).find.text() + '\n\n' + $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-post-body-resumo').text();
                     const latestNewsLink = $(latestNews).attr('href');
                     const latestNewsImage = $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-media-wrapper > a > div > picture > img').attr('src');
 
