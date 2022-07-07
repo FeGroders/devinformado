@@ -23,6 +23,8 @@
     "cron": "^2.0.0",
     "dotenv": "^16.0.1",
     "puppeteer": "^15.3.0",
+    "sequelize": "^6.21.2",
+    "sqlite3": "^5.0.8",
     "twitter-api-v2": "^1.12.3"
   }
 }

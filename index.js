@@ -38,6 +38,17 @@ function downloadImage(imageUrl) {
     });
 }
 
+(async () => {
+    const database = require('./src/db/db');
+ 
+    try {
+        const resultado = await database.sync();
+        // console.log(resultado);
+    } catch (error) {
+        console.log(error);
+    }
+})();
+
 const doWork = async () => {
     switch(getRandomInt(3)) {
         case 0: 
@@ -65,9 +76,45 @@ const doWork = async () => {
     if (website) {
         website.getLatestNews().then(response => {
             var latestNewsInfo = response;
-            downloadImage(response.imageUrl).then(response => {
-                tweetNews(latestNewsInfo);
-                postNews(latestNewsInfo);
+            const Post = require('./src/db/model/post');
+
+            const posts = Post.findAll().then(posts => {
+                console.log(Date() + '- Checking if news already exists...');
+                var exists = false;
+                for (var i = 0; i < posts.length; i++) {
+                    if (posts[i].title == latestNewsInfo.title) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    console.log(Date() + '- News does not exist...');
+                    downloadImage(response.imageUrl).then(response => {
+                        tweetNews(latestNewsInfo);
+                        postNews(latestNewsInfo);
+
+                        // const resultadoCreate = await Post.create({
+                        //     nome: 'mouse',
+                        //     preco: 10,
+                        //     descricao: 'Um mouse USB bonitão'
+                        // })
+                        // console.log(resultadoCreate);
+                        const resultadoCreate = await Post.create({
+                            // twitter_id: latestNewsInfo.twitterId,
+                            // website_url: latestNewsInfo.websiteUrl,
+                            // title: latestNewsInfo.title,
+                            // image_url: latestNewsInfo.imageUrl
+                            twitter_id: 'latestNewsInfo.twitterId',
+                            website_url: latestNewsInfo.websiteUrl,
+                            title: latestNewsInfo.title,
+                            image_url: latestNewsInfo.imageUrl
+                        }).then(response => {
+                            console.log(Date() + '- News created');
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    });
+                }
             });
         });
     }
