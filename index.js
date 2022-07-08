@@ -40,7 +40,7 @@ function downloadImage(imageUrl) {
 function getRandomWebsite () {
     return new Promise(resolve => {
         try {
-            const websites = [Tecmundo, CnnBrasil, Veja];
+            const websites = [Tecmundo, CnnBrasil, Veja, G1, OlharDigital];
             const randomWebsite = websites[getRandomInt(websites.length)];
             resolve(new randomWebsite());
         } catch(err) {
@@ -54,13 +54,13 @@ function checkIfIsPosted(title) {
         var exists = true;
         try {
             const Post = require('./src/db/model/post');
-            Post.findAll().then(posts => {
-                for (var i = 0; i < posts.length; i++) {
-                    exists = posts[i].title == title;
+            Post.findAll({
+                where: {
+                    title: title
                 }
+            }).then(posts => {
+                exists = posts.length > 0;
                 resolve(exists);
-            }).catch(err => {
-                console.log(err);
             });
         } catch(err) {
             console.log(err);
@@ -73,6 +73,10 @@ const doWork = async () => {
         const Post = require('./src/db/model/post');
         website = await getRandomWebsite();
         const latestNewsInfo = await website.getLatestNews();
+        if (latestNewsInfo.imageUrl == undefined) {
+            return;
+        }
+
         const exists = await checkIfIsPosted(latestNewsInfo.title);
 
         if (!exists) {     
@@ -82,6 +86,10 @@ const doWork = async () => {
                 const image = fs.readFileSync('./public/images/image.jpg');
                 if (image.byteLength >= 5242880) {
                     console.log(Date() + '- Image is too big');
+                    await Post.create({
+                        website_url: latestNewsInfo.link,
+                        title: latestNewsInfo.title
+                    });
                     return;
                 }
 
