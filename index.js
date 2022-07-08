@@ -9,7 +9,6 @@ const { OlharDigital } = require('./src/scripts/olhardigital.js');
 const { CnnBrasil } = require('./src/scripts/cnn.js');
 const { G1 } = require('./src/scripts/g1.js');
 const { Veja } = require('./src/scripts/veja.js');
-var website = null;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -38,87 +37,81 @@ function downloadImage(imageUrl) {
     });
 }
 
+function getRandomWebsite () {
+    return new Promise(resolve => {
+        try {
+            const websites = [Tecmundo, CnnBrasil, Veja];
+            const randomWebsite = websites[getRandomInt(websites.length)];
+            resolve(new randomWebsite());
+        } catch(err) {
+            console.log(err);
+        }
+    });
+}
+
+function checkIfIsPosted(title) {
+    return new Promise(resolve => {
+        var exists = true;
+        try {
+            const Post = require('./src/db/model/post');
+            Post.findAll().then(posts => {
+                for (var i = 0; i < posts.length; i++) {
+                    exists = posts[i].title == title;
+                }
+                resolve(exists);
+            }).catch(err => {
+                console.log(err);
+            });
+        } catch(err) {
+            console.log(err);
+        }
+    });
+}
+
+const doWork = async () => {
+    try {
+        const Post = require('./src/db/model/post');
+        website = await getRandomWebsite();
+        const latestNewsInfo = await website.getLatestNews();
+        const exists = await checkIfIsPosted(latestNewsInfo.title);
+
+        if (!exists) {     
+            console.log(Date() + '- Posting news...');
+            const downloadImageResult = await downloadImage(latestNewsInfo.imageUrl);
+            if (downloadImageResult) {
+                const image = fs.readFileSync('./public/images/image.jpg');
+                if (image.byteLength >= 5242880) {
+                    console.log(Date() + '- Image is too big');
+                    return;
+                }
+
+                await tweetNews(latestNewsInfo);
+                await postNews(latestNewsInfo);
+                await Post.create({
+                    website_url: latestNewsInfo.link,
+                    title: latestNewsInfo.title
+                });
+                console.log(Date() + '- News posted');
+            }
+        } else {
+            console.log(Date() + '- News already posted');
+        }
+    } catch(err) {
+        console.log(err);
+    }
+} 
+
 (async () => {
     const database = require('./src/db/db');
  
     try {
-        const resultado = await database.sync();
-        // console.log(resultado);
+        console.log(Date() + '- Connecting to database...');
+        const result = await database.sync();
+        console.log(Date() + '- Database connected');
     } catch (error) {
         console.log(error);
     }
 })();
-
-const doWork = async () => {
-    switch(getRandomInt(3)) {
-        case 0: 
-         console.log(Date() + '- Tecmundo');
-            website = new Tecmundo()
-            break;
-        case 1:
-            console.log(Date() + '- Veja'); //ok
-            website = new Veja()
-            break;
-        case 2:
-            console.log(Date() + '- CnnBrasil'); //ok
-            website = new CnnBrasil()
-            break;
-        // case 3: 
-        //     console.log(Date() + '- G1');
-        //     website = new G1()
-        //     break;
-        // case 4:
-        //     console.log(Date() + '- OlharDigital');
-        //     website = new OlharDigital()
-        //     break;
-    }
-
-    if (website) {
-        website.getLatestNews().then(response => {
-            var latestNewsInfo = response;
-            const Post = require('./src/db/model/post');
-
-            const posts = Post.findAll().then(posts => {
-                console.log(Date() + '- Checking if news already exists...');
-                var exists = false;
-                for (var i = 0; i < posts.length; i++) {
-                    if (posts[i].title == latestNewsInfo.title) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) {
-                    console.log(Date() + '- News does not exist...');
-                    downloadImage(response.imageUrl).then(response => {
-                        tweetNews(latestNewsInfo);
-                        postNews(latestNewsInfo);
-
-                        // const resultadoCreate = await Post.create({
-                        //     nome: 'mouse',
-                        //     preco: 10,
-                        //     descricao: 'Um mouse USB bonitão'
-                        // })
-                        // console.log(resultadoCreate);
-                        const resultadoCreate = await Post.create({
-                            // twitter_id: latestNewsInfo.twitterId,
-                            // website_url: latestNewsInfo.websiteUrl,
-                            // title: latestNewsInfo.title,
-                            // image_url: latestNewsInfo.imageUrl
-                            twitter_id: 'latestNewsInfo.twitterId',
-                            website_url: latestNewsInfo.websiteUrl,
-                            title: latestNewsInfo.title,
-                            image_url: latestNewsInfo.imageUrl
-                        }).then(response => {
-                            console.log(Date() + '- News created');
-                        }).catch(error => {
-                            console.log(error);
-                        });
-                    });
-                }
-            });
-        });
-    }
-} 
 
 doWork();
 

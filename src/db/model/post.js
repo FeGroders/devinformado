@@ -8,9 +8,6 @@ const Post = database.define('post', {
         allowNull: false,
         primaryKey: true
     },
-    twitter_id: {
-        type: Sequelize.STRING,
-    },
     website_url: {
         type: Sequelize.STRING
     },

@@ -16,24 +16,21 @@ const client = new TwitterApi({
 const rwClient = client.readWrite;
 
 const tweetNews = async (latestNewsInfo) => {
-    try {
-        console.log(Date() + '- Uploading image...');  
-        client.v1.uploadMedia('./public/images/image.jpg', { mimeType: EUploadMimeType.Png }).then(response => {
-            console.log(Date() + '- Image Uploaded'); 
-            console.log(Date() + '- Tweeting...');  
-            rwClient.v1.tweet(`${latestNewsInfo.title}`, { media_ids: response}).then(response => {
-                //TODO: save tweet info in database
-
-                console.log(Date() + '- Tweeted'); 
-                console.log(Date() + '- Replying with the url');
-                client.v1.reply(`Leia mais: ${latestNewsInfo.link}`, response.id_str).then(response => {
-                    console.log(Date() + '- Replied'); 
-                }).catch(console.error);
-            }).catch(console.error); 
-        }).catch(console.error);
-    } catch (error) {
-        console.log(error);
-    }
+    return new Promise((resolve, reject) => {
+        try {
+            console.log(Date() + '- Uploading image...'); 
+            client.v1.uploadMedia('./public/images/image.jpg', { mimeType: EUploadMimeType.Png }).then(response => {
+                console.log(Date() + '- Image Uploaded'); 
+                console.log(Date() + '- Tweeting...');  
+                rwClient.v1.tweet(`${latestNewsInfo.title}\n\nLeia mais: ${latestNewsInfo.link}`, { media_ids: response}).then(response => {
+                    resolve(response);
+                }).catch(console.error); 
+            }).catch(console.error);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
 }
 
 module.exports = { tweetNews };
