@@ -4,6 +4,7 @@ const fs = require('fs');
 const axios = require('axios');
 const { tweetNews } = require('./src/scripts/twitter.js');
 const { postNews } = require('./src/scripts/telegram.js');
+const { sendWebhook } = require('./src/scripts/discord.js');
 const { Tecmundo } = require('./src/scripts/tecmundo.js');
 const { OlharDigital } = require('./src/scripts/olhardigital.js');
 const { CnnBrasil } = require('./src/scripts/cnn.js');
@@ -95,6 +96,7 @@ const doWork = async () => {
 
                 await tweetNews(latestNewsInfo);
                 await postNews(latestNewsInfo);
+                await sendWebhook(latestNewsInfo);
                 await Post.create({
                     website_url: latestNewsInfo.link,
                     title: latestNewsInfo.title
