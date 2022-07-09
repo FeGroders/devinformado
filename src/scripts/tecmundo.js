@@ -16,10 +16,12 @@ class Tecmundo {
                     const latestNews = $(mainPage).find('a.tec--card__thumb__link').first();
                     const latestNewsTitle = $(mainPage).find('a.tec--card__title__link').text();
                     const latestNewsLink = $(latestNews).attr('href');
-                    const latestNewsImage = $(latestNews).find('img.tec--card__thumb__image').attr('data-src').split('?')[0];
+                    var latestNewsImage = $(latestNews).find('img.tec--card__thumb__image').attr('data-src');
+                    if (latestNewsImage != undefined) {
+                        latestNewsImage = latestNewsImage.split('?')[0];
+                    }
 
-                    var latestNewsInfo =
-                    {
+                    var latestNewsInfo = {
                         title: latestNewsTitle,
                         link: latestNewsLink,
                         imageUrl: latestNewsImage,

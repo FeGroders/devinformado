@@ -12,10 +12,10 @@ class G1 {
                 axios(this.url).then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
-                    const latestNews = $('.feed-post-body-title.gui-color-primary.gui-color-hover').first();
-                    const latestNewsTitle = $(latestNews).find.text() + '\n\n' + $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-post-body-resumo').text();
-                    const latestNewsLink = $(latestNews).attr('href');
-                    const latestNewsImage = $('#eccd49a5961f68d696e46136a9d6e03a > div > div.feed-media-wrapper > a > div > picture > img').attr('src');
+                    const latestNews = $('.bastian-feed-item').first();
+                    const latestNewsTitle = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').text() + '\n\n' + $(latestNews).find('.feed-post-body-resumo').text();
+                    const latestNewsLink = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').attr('href');
+                    const latestNewsImage = $('img.bstn-fd-picture-image').attr('src');
 
                     var latestNewsInfo =
                     {
