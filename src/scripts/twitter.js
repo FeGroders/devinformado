@@ -22,9 +22,20 @@ const tweetNews = async (latestNewsInfo) => {
             client.v1.uploadMedia('./public/images/image.jpg', { mimeType: EUploadMimeType.Png }).then(response => {
                 console.log(Date() + '- Image Uploaded'); 
                 console.log(Date() + '- Tweeting...');  
-                rwClient.v1.tweet(`${latestNewsInfo.title}\n\nLeia mais: ${latestNewsInfo.link}`, { media_ids: response}).then(response => {
-                    resolve(response);
-                }).catch(console.error); 
+                var tweetMessage = `${latestNewsInfo.title}\n\nLeia mais: ${latestNewsInfo.link}`;
+                console.log(tweetMessage.length);
+                if (tweetMessage.length < 280) {
+                    rwClient.v1.tweet(tweetMessage, { media_ids: response}).then(response => {
+                        resolve(response);
+                    }).catch(console.error); 
+                } else {
+                    rwClient.v1.tweet(`${latestNewsInfo.title}`, { media_ids: response}).then(response => {
+                        rwClient.v1.tweet(`Leia mais: ${latestNewsInfo.link}`, { in_reply_to_status_id: response.id_str }).then(response => {
+                            resolve(response);
+                        });
+                    }).catch(console.error); 
+                }
+                
             }).catch(console.error);
         } catch (error) {
             console.log(error);

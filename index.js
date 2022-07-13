@@ -1,4 +1,3 @@
-const { job } = require('cron');
 const CronJob = require('cron').CronJob;
 const fs = require('fs');
 const axios = require('axios');
@@ -74,7 +73,7 @@ const doWork = async () => {
         const Post = require('./src/db/model/post');
         website = await getRandomWebsite();
         const latestNewsInfo = await website.getLatestNews();
-        if (latestNewsInfo.imageUrl == undefined) {
+        if (latestNewsInfo.imageUrl == undefined || latestNewsInfo.title == '' || latestNewsInfo.link == '') {
             return;
         }
 
@@ -113,6 +112,7 @@ const doWork = async () => {
 
 (async () => {
     const database = require('./src/db/db');
+    const Post = require('./src/db/model/post');
  
     try {
         console.log(Date() + '- Connecting to database...');
@@ -123,11 +123,9 @@ const doWork = async () => {
     }
 })();
 
-doWork();
+console.log(Date() + '- Starting cron job...');
+var job = new CronJob('0 * * * *', function() {
+    doWork();
+});
 
-// const jog = new CronJob('* 5 * * * *', () => {
-//     console.log('running a task every 5 minutes');
-//     doWork();
-// });
-
-// job.start();
+job.start();
