@@ -124,7 +124,7 @@ const doWork = async () => {
 })();
 
 console.log(Date() + '- Starting cron job...');
-var job = new CronJob('0,30 * * * *', function() {
+var job = new CronJob('0,30 8-22 * * *', function() {
     doWork();
 });
 
