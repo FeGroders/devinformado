@@ -9,6 +9,7 @@ const { OlharDigital } = require('./src/scripts/olhardigital.js');
 const { CnnBrasil } = require('./src/scripts/cnn.js');
 const { G1 } = require('./src/scripts/g1.js');
 const { Veja } = require('./src/scripts/veja.js');
+const { sendErrorLog } = require('./src/scripts/error.js');
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -32,7 +33,7 @@ function downloadImage(imageUrl) {
                 });
             });
         } catch(err) {
-            console.log(err);
+            sendErrorLog(err);
         }
     });
 }
@@ -44,7 +45,7 @@ function getRandomWebsite () {
             const randomWebsite = websites[getRandomInt(websites.length)];
             resolve(new randomWebsite());
         } catch(err) {
-            console.log(err);
+            sendErrorLog(err);
         }
     });
 }
@@ -63,7 +64,7 @@ function checkIfIsPosted(title) {
                 resolve(exists);
             });
         } catch(err) {
-            console.log(err);
+            sendErrorLog(err);
         }
     });
 }
@@ -106,7 +107,7 @@ const doWork = async () => {
             console.log(Date() + '- News already posted');
         }
     } catch(err) {
-        console.log(err);
+        sendErrorLog(err);
     }
 } 
 
