@@ -57,7 +57,7 @@ function checkIfIsPosted(title) {
             const Post = require('./src/db/model/post');
             Post.findAll({
                 where: {
-                    title: title
+                    website_url: title
                 }
             }).then(posts => {
                 exists = posts.length > 0;
@@ -78,7 +78,7 @@ const doWork = async () => {
             return;
         }
 
-        const exists = await checkIfIsPosted(latestNewsInfo.title);
+        const exists = await checkIfIsPosted(latestNewsInfo.link);
 
         if (!exists) {     
             console.log(Date() + '- Posting news...');
@@ -96,7 +96,7 @@ const doWork = async () => {
 
                 await tweetNews(latestNewsInfo);
                 await postNews(latestNewsInfo);
-                await sendWebhook(latestNewsInfo);
+                // await sendWebhook(latestNewsInfo);
                 await Post.create({
                     website_url: latestNewsInfo.link,
                     title: latestNewsInfo.title

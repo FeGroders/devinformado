@@ -24,7 +24,7 @@ const tweetNews = async (latestNewsInfo) => {
                 console.log(Date() + '- Tweeting...');  
                 var tweetMessage = `${latestNewsInfo.title}\n\nLeia mais: ${latestNewsInfo.link}`;
                 console.log(tweetMessage.length);
-                if (tweetMessage.length < 280) {
+                if (tweetMessage.length < 270) {
                     rwClient.v1.tweet(tweetMessage, { media_ids: response}).then(response => {
                         resolve(response);
                     }).catch(console.error); 
