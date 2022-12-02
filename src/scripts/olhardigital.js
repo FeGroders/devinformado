@@ -23,6 +23,7 @@ class OlharDigital {
                         title: latestNewsTitle,
                         link: latestNewsLink,
                         imageUrl: latestNewsImage,
+                        topics: ''
                     };
                     console.log(latestNewsInfo);
                     resolve(latestNewsInfo);

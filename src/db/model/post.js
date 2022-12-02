@@ -11,7 +11,8 @@ const Post = database.define('post', {
     website_url: {
         type: Sequelize.STRING
     },
-    title: Sequelize.STRING
+    title: Sequelize.STRING,
+    topics: Sequelize.STRING,
 })
  
 module.exports = Post;

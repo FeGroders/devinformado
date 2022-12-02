@@ -9,22 +9,37 @@ class Veja {
     getLatestNews(){
         return new Promise(resolve =>{
             try {
+                var latestNewsTitle;
+                var latestNewsLink;
+                var latestNewsImage;
+
                 axios(this.url).then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const latestNews = $('.card.not-loaded.list-item').first();
-                    const latestNewsTitle = $(latestNews).find('h2.title').text() + '\n' + $(latestNews).find('span.description').text().replace(/\t/g, '');
-                    const latestNewsLink = $(latestNews).find('a').attr('href');
-                    const latestNewsImage = $(latestNews).find('img').attr('src').split('?')[0];
+                    latestNewsTitle = $(latestNews).find('h2.title').text() + '\n' + $(latestNews).find('span.description').text().replace(/\t/g, '');
+                    latestNewsLink = $(latestNews).find('a').attr('href');
+                    latestNewsImage = $(latestNews).find('img').attr('src').split('?')[0];
 
-                    var latestNewsInfo =
-                    {
-                        title: latestNewsTitle,
-                        link: latestNewsLink,
-                        imageUrl: latestNewsImage,
-                    };
-                    console.log(latestNewsInfo);
-                    resolve(latestNewsInfo);
+                    axios(latestNewsLink).then(response => {
+                        const html = response.data;
+                        const $ = cheerio.load(html);
+                        const topicsList = $('.article.post > section > ul.article-tags.tags > li')
+                        var topics = '';
+                        $(topicsList).each(function() {
+                            topics += '#'+$(this).text().replace(/\s/g, '')+' ';
+                        });
+
+                        var latestNewsInfo =
+                        {
+                            title: latestNewsTitle,
+                            link: latestNewsLink,
+                            imageUrl: latestNewsImage,
+                            topics: topics
+                        };
+                        console.log(latestNewsInfo);
+                        resolve(latestNewsInfo);
+                    }).catch(console.error);
                 }).catch(console.error);
             } catch (error) {
                 console.log(error);
