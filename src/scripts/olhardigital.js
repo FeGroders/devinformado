@@ -13,7 +13,7 @@ class OlharDigital {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const mainPage = $('.card-post.type1.img-effect1').first();
-                    const latestNews = $(mainPage).find('.attachment-last-home.size-last-home.wp-post-image').first();
+                    const latestNews = $(mainPage).find('.attachment-last-home.size-last-home').first();
                     const latestNewsTitle = $(mainPage).attr('title');
                     const latestNewsLink = $(mainPage).attr('href');
                     const latestNewsImage = $(latestNews).attr('src').replace('-210x172', '');

@@ -89,17 +89,19 @@ const doWork = async () => {
                     console.log(Date() + '- Image is too big');
                     await Post.create({
                         website_url: latestNewsInfo.link,
-                        title: latestNewsInfo.title
+                        title: latestNewsInfo.title,
+                        topics: latestNewsInfo.topics  
                     });
                     return;
                 }
 
                 await tweetNews(latestNewsInfo);
                 await postNews(latestNewsInfo);
-                // await sendWebhook(latestNewsInfo);
+                await sendWebhook(latestNewsInfo);
                 await Post.create({
                     website_url: latestNewsInfo.link,
-                    title: latestNewsInfo.title
+                    title: latestNewsInfo.title,
+                    topics: latestNewsInfo.topics  
                 });
                 console.log(Date() + '- News posted');
             }
