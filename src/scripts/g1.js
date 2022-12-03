@@ -9,23 +9,36 @@ class G1 {
     getLatestNews(){
         return new Promise(resolve =>{
             try {
+                var latestNewsTitle;
+                var latestNewsLink;
+                var latestNewsImage;
                 axios(this.url).then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const latestNews = $('.bastian-feed-item').first();
-                    const latestNewsTitle = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').text() + '\n\n' + $(latestNews).find('.feed-post-body-resumo').text();
-                    const latestNewsLink = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').attr('href');
-                    const latestNewsImage = $('img.bstn-fd-picture-image').attr('src');
+                    latestNewsTitle = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').text() + '\n\n' + $(latestNews).find('.feed-post-body-resumo').text();
+                    latestNewsLink = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').attr('href');
+                    latestNewsImage = $('img.bstn-fd-picture-image').attr('src');
 
-                    var latestNewsInfo =
-                    {
-                        title: latestNewsTitle,
-                        link: latestNewsLink,
-                        imageUrl: latestNewsImage,
-                        topics: ''
-                    };
-                    console.log(latestNewsInfo);
-                    resolve(latestNewsInfo);
+                    axios(latestNewsLink).then(response => {
+                        const html = response.data;
+                        const $ = cheerio.load(html);
+                        const topicsList = $('body > div.glb-grid > main > div.mc-article-body > div.mc-column.entities > ul > li');
+                        var topics = '';
+                        $(topicsList).each(function() {
+                            topics += '#'+$(this).text().replace(/\s/g, '')+' ';
+                        });
+    
+                        var latestNewsInfo =
+                        {
+                            title: latestNewsTitle,
+                            link: latestNewsLink,
+                            imageUrl: latestNewsImage,
+                            topics: topics
+                        };
+                        console.log(latestNewsInfo);
+                        resolve(latestNewsInfo);
+                    }).catch(console.error);
                 }).catch(console.error);
             } catch (error) {
                 console.log(error);
