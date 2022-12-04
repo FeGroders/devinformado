@@ -12,6 +12,7 @@ const Post = database.define('post', {
         type: Sequelize.STRING
     },
     title: Sequelize.STRING,
+    subtitle: Sequelize.STRING,
     topics: Sequelize.STRING,
 })
  

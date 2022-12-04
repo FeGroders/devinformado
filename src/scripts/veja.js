@@ -10,6 +10,7 @@ class Veja {
         return new Promise(resolve =>{
             try {
                 var latestNewsTitle;
+                var latestNewsSubTitle;
                 var latestNewsLink;
                 var latestNewsImage;
 
@@ -17,7 +18,8 @@ class Veja {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const latestNews = $('.card.not-loaded.list-item').first();
-                    latestNewsTitle = $(latestNews).find('h2.title').text() + '\n' + $(latestNews).find('span.description').text().replace(/\t/g, '');
+                    latestNewsTitle = $(latestNews).find('h2.title').text();
+                    latestNewsSubTitle = $(latestNews).find('span.description').text().replace(/\t/g, '');
                     latestNewsLink = $(latestNews).find('a').attr('href');
                     latestNewsImage = $(latestNews).find('img').attr('src').split('?')[0];
 
@@ -33,11 +35,11 @@ class Veja {
                         var latestNewsInfo =
                         {
                             title: latestNewsTitle,
+                            subtitle: latestNewsSubTitle,
                             link: latestNewsLink,
                             imageUrl: latestNewsImage,
                             topics: topics
                         };
-                        console.log(latestNewsInfo);
                         resolve(latestNewsInfo);
                     }).catch(console.error);
                 }).catch(console.error);
