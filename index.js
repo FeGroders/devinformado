@@ -101,9 +101,9 @@ const doWork = async () => {
                     return;
                 }
 
-                // await tweetNews(latestNewsInfo);
-                // await postNews(latestNewsInfo);
-                // await sendWebhook(latestNewsInfo);
+                await tweetNews(latestNewsInfo);
+                await postNews(latestNewsInfo);
+                await sendWebhook(latestNewsInfo);
                 await Post.create({
                     website_url: latestNewsInfo.link,
                     title: latestNewsInfo.title,
@@ -133,9 +133,9 @@ const doWork = async () => {
     }
 })();
 
-// console.log(Date() + '- Starting cron job...');
-// var job = new CronJob('0,30 8-22 * * *', function() {
+console.log(Date() + '- Starting cron job...');
+var job = new CronJob('0,30 8-22 * * *', function() {
     doWork();
-// });
+});
 
-// job.start();
+job.start();
