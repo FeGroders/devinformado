@@ -10,13 +10,15 @@ class G1 {
         return new Promise(resolve =>{
             try {
                 var latestNewsTitle;
+                var latestNewsSubtitle;
                 var latestNewsLink;
                 var latestNewsImage;
                 axios(this.url).then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const latestNews = $('.bastian-feed-item').first();
-                    latestNewsTitle = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').text() + '\n\n' + $(latestNews).find('.feed-post-body-resumo').text();
+                    latestNewsTitle = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').text();
+                    latestNewsSubtitle = $(latestNews).find('.feed-post-body-resumo').text()
                     latestNewsLink = $(latestNews).find('.feed-post-link.gui-color-primary.gui-color-hover').attr('href');
                     latestNewsImage = $('img.bstn-fd-picture-image').attr('src');
 
@@ -32,11 +34,11 @@ class G1 {
                         var latestNewsInfo =
                         {
                             title: latestNewsTitle,
+                            subTitle: latestNewsSubtitle,
                             link: latestNewsLink,
                             imageUrl: latestNewsImage,
                             topics: topics
                         };
-                        console.log(latestNewsInfo);
                         resolve(latestNewsInfo);
                     }).catch(console.error);
                 }).catch(console.error);

@@ -8,7 +8,7 @@ function sendWebhook(latestNewsInfo) {
             console.log(Date() + '- Sendind webhook in Discord...');
             axios.post(DISCORD_WEBHOOK_URL, {
                 embeds: [{
-                    title: latestNewsInfo.title,
+                    title: latestNewsInfo.title + (latestNewsInfo.subtitle != undefined ? `\n\n${latestNewsInfo.subtitle}` : ''),
                     url: latestNewsInfo.link,
                     image: {
                         url: latestNewsInfo.imageUrl

@@ -11,7 +11,7 @@ function postNews(latestNewsInfo) {
             axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
                 chat_id: TELEGRAM_BOT_CHAT_ID,
                 photo: latestNewsInfo.imageUrl,
-                caption: `${latestNewsInfo.title}`,
+                caption: `${latestNewsInfo.title}`+(latestNewsInfo.subtitle != undefined ? `\n\n${latestNewsInfo.subtitle}` : ''),
                 parse_mode: 'Markdown',
                 disable_web_page_preview: true,
                 reply_markup: {

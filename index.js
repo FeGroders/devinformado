@@ -10,6 +10,7 @@ const { CnnBrasil } = require('./src/scripts/cnn.js');
 const { G1 } = require('./src/scripts/g1.js');
 const { Veja } = require('./src/scripts/veja.js');
 const { sendErrorLog } = require('./src/scripts/error.js');
+const { addTextToImage } = require('./src/scripts/image.js');
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -24,6 +25,9 @@ function downloadImage(imageUrl) {
                 url: imageUrl,
                 responseType: "stream",   
             }).then(response => {
+                if (!fs.existsSync('./public/images/')) {
+                    fs.mkdirSync('./public/images/');
+                }
                 const image = fs.createWriteStream('./public/images/image.jpg');
                 response.data.pipe(image);
                 image.on('finish', () => {
@@ -84,23 +88,26 @@ const doWork = async () => {
             console.log(Date() + '- Posting news...');
             const downloadImageResult = await downloadImage(latestNewsInfo.imageUrl);
             if (downloadImageResult) {
+                await addTextToImage('./public/images/image.jpg', latestNewsInfo.title);
                 const image = fs.readFileSync('./public/images/image.jpg');
                 if (image.byteLength >= 5242880) {
                     console.log(Date() + '- Image is too big');
                     await Post.create({
                         website_url: latestNewsInfo.link,
                         title: latestNewsInfo.title,
+                        subtitle: latestNewsInfo.subtitle,
                         topics: latestNewsInfo.topics  
                     });
                     return;
                 }
 
-                await tweetNews(latestNewsInfo);
-                await postNews(latestNewsInfo);
-                await sendWebhook(latestNewsInfo);
+                // await tweetNews(latestNewsInfo);
+                // await postNews(latestNewsInfo);
+                // await sendWebhook(latestNewsInfo);
                 await Post.create({
                     website_url: latestNewsInfo.link,
                     title: latestNewsInfo.title,
+                    subtitle: latestNewsInfo.subtitle,
                     topics: latestNewsInfo.topics  
                 });
                 console.log(Date() + '- News posted');
@@ -126,9 +133,9 @@ const doWork = async () => {
     }
 })();
 
-console.log(Date() + '- Starting cron job...');
-var job = new CronJob('0,30 8-22 * * *', function() {
+// console.log(Date() + '- Starting cron job...');
+// var job = new CronJob('0,30 8-22 * * *', function() {
     doWork();
-});
+// });
 
-job.start();
+// job.start();

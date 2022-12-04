@@ -22,19 +22,18 @@ const tweetNews = async (latestNewsInfo) => {
             client.v1.uploadMedia('./public/images/image.jpg', { mimeType: EUploadMimeType.Png }).then(response => {
                 console.log(Date() + '- Image Uploaded'); 
                 console.log(Date() + '- Tweeting...');  
-                var tweetMessage = `${latestNewsInfo.title}\n\nLeia mais: ${latestNewsInfo.link}`+(latestNewsInfo.topics != '' ? `\n\n${latestNewsInfo.topics}` : '');
+                var tweetMessage = `${latestNewsInfo.title}`+(latestNewsInfo.subtitle != undefined ? `\n\n${latestNewsInfo.subtitle}` : '')+`\n\nLeia mais: ${latestNewsInfo.link}`+(latestNewsInfo.topics != '' ? `\n\n${latestNewsInfo.topics}` : '');
                 if (tweetMessage.length < 270) {
                     rwClient.v1.tweet(tweetMessage, { media_ids: response}).then(response => {
                         resolve(response);
                     }).catch(console.error); 
                 } else {
-                       rwClient.v1.tweet(`${latestNewsInfo.title}`+(latestNewsInfo.topics != '' ? `\n\n${latestNewsInfo.topics}` : ''), { media_ids: response}).then(response => {
+                       rwClient.v1.tweet(`${latestNewsInfo.title}`+(latestNewsInfo.subtitle != undefined ? `\n\n${latestNewsInfo.subtitle}` : '')+(latestNewsInfo.topics != '' ? `\n\n${latestNewsInfo.topics}` : ''), { media_ids: response}).then(response => {
                         rwClient.v1.tweet(`Leia mais: ${latestNewsInfo.link}`, { in_reply_to_status_id: response.id_str }).then(response => {
                             resolve(response);
                         });
                     }).catch(console.error); 
                 }
-                
             }).catch(console.error);
         } catch (error) {
             console.log(error);

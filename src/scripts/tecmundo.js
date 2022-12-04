@@ -35,11 +35,11 @@ class Tecmundo {
                         var latestNewsInfo =
                         {
                             title: latestNewsTitle,
+                            subtitle: '',
                             link: latestNewsLink,
                             imageUrl: latestNewsImage,
                             topics: topics
                         };
-                        console.log(latestNewsInfo);
                         resolve(latestNewsInfo);
                     }).catch(console.error);
                 }).catch(console.error);
